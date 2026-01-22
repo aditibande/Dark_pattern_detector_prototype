@@ -11,6 +11,7 @@ import { AnalysisResultCard } from './analysis-result-card';
 import type { FormState } from '@/lib/types';
 import { Card, CardContent } from './ui/card';
 import { Skeleton } from './ui/skeleton';
+import { Separator } from './ui/separator';
 
 const initialState: FormState = {
   result: null,
@@ -129,25 +130,25 @@ export function Detector() {
 
   return (
     <div className="w-full space-y-8">
-      <Card className="p-2 bg-card/80 backdrop-blur-sm border-2">
+      <Card className="p-2 bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-lg shadow-black/5">
         <form ref={formRef} action={formAction} className="w-full space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
                 <Textarea
                     name="websiteText"
                     placeholder="Enter website content here (at least 50 characters)..."
-                    className="min-h-[160px] w-full rounded-lg border bg-background p-4 text-base shadow-inner focus-visible:ring-primary focus-visible:ring-2"
+                    className="min-h-[160px] w-full rounded-lg border-primary/30 bg-background/70 p-4 text-base shadow-inner focus-visible:ring-primary focus-visible:ring-2"
                 />
                 
                 <Card
-                    className="border-2 border-dashed bg-muted/50 hover:border-primary/50 hover:bg-muted/80 hover:cursor-pointer transition-colors flex items-center justify-center group"
+                    className="border-2 border-dashed border-primary/30 bg-muted/30 hover:border-primary/50 hover:bg-muted/50 hover:cursor-pointer transition-colors flex items-center justify-center group"
                     onClick={() => fileInputRef.current?.click()}
                 >
                     <CardContent className="flex flex-col items-center justify-center space-y-2 p-6 text-sm">
                     {!imagePreview ? (
                         <div className="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground transition-colors group-hover:text-foreground">
-                            <Upload className="h-8 w-8" />
-                            <span className="font-medium">Drag & drop or click to upload</span>
-                            <span>PNG, JPG, WEBP (max 4MB)</span>
+                            <Upload className="h-8 w-8 text-primary/80" />
+                            <span className="font-medium text-foreground">Click to upload or drag & drop</span>
+                            <span className="text-xs">PNG, JPG, or WEBP (Max 4MB)</span>
                         </div>
                     ) : (
                         <div className="relative">
