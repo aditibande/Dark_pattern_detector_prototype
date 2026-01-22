@@ -73,7 +73,7 @@ export async function analyze(
       websiteText: textToAnalyze,
       imageDataUri,
     });
-    return { result, websiteText: textToAnalyze, error: null };
+    return { result, websiteText: textToAnalyze || '', error: null };
   } catch (e) {
     console.error(e);
     return {
