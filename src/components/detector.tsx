@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useRef, useState, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { analyze } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ function LoadingState() {
 }
 
 export function Detector() {
-  const [state, formAction] = useFormState(analyze, initialState);
+  const [state, formAction] = useActionState(analyze, initialState);
   const { toast } = useToast();
   const resultRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
