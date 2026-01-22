@@ -12,7 +12,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AnalyzeWebsiteTextInputSchema = z.object({
-  websiteText: z.string().describe('The text content of the website to analyze.'),
+  websiteText: z.string().describe('The text content of the website to analyze.').optional(),
+  imageDataUri: z
+    .string()
+    .describe(
+      "A screenshot of the website, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    )
+    .optional(),
 });
 export type AnalyzeWebsiteTextInput = z.infer<typeof AnalyzeWebsiteTextInputSchema>;
 
@@ -23,7 +29,9 @@ const AnalyzeWebsiteTextOutputSchema = z.object({
     .describe(
       'The type of dark pattern detected, if any.  Must be one of: Fake Urgency, Hidden Costs, Forced Choice, Misleading Language, or None.'
     ),
-  evidence: z.string().describe('The exact sentence or phrase from the website exhibiting the dark pattern.'),
+  evidence: z
+    .string()
+    .describe('The exact sentence or phrase from the website, or a description of the visual element from the image, exhibiting the dark pattern.'),
   explanation: z.string().describe('An explanation of why the identified text may be considered a dark pattern.'),
   confidence: z.string().describe('The confidence level of the detection (Low, Medium, or High).'),
   disclaimer: z.string().describe('A disclaimer indicating that the analysis is AI-assisted and not a legal judgment.'),
@@ -41,7 +49,7 @@ const analyzeWebsiteTextPrompt = ai.definePrompt({
   prompt: `You are an AI assistant designed to detect dark patterns in websites.
 
 Task:
-Analyze the given website text and identify whether it contains any dark patterns.
+Analyze the given website text and/or image and identify whether it contains any dark patterns.
 
 Focus only on the following dark patterns:
 1. Fake urgency or scarcity
@@ -50,26 +58,33 @@ Focus only on the following dark patterns:
 4. Misleading or ambiguous language
 
 Instructions:
-- Carefully read the website text.
+- Carefully read the website text and analyze the image if provided.
 - Do NOT assume malicious intent.
 - If a pattern is detected, explain WHY it may be considered deceptive.
-- Always provide evidence from the text.
+- Always provide evidence from the text, or a description of the visual from the image that is evidence.
 - If no dark pattern is found, clearly say so.
 
 Output format (JSON only):
 {
   "dark_pattern_detected": true/false,
   "pattern_type": "Fake Urgency | Hidden Costs | Forced Choice | Misleading Language | None",
-  "evidence": "Exact sentence or phrase from the website",
+  "evidence": "Exact sentence or phrase from the website, or a description of the visual element from the image",
   "explanation": "Why this may influence user decision-making",
   "confidence": "Low | Medium | High",
   "disclaimer": "This is an AI-assisted analysis and not a legal judgment."
 }
 
+{{#if websiteText}}
 Website Text:
 """
 {{{websiteText}}}
 """
+{{/if}}
+
+{{#if imageDataUri}}
+Website Screenshot:
+{{media url=imageDataUri}}
+{{/if}}
 `,
 });
 
