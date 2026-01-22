@@ -47,14 +47,6 @@ function HighlightedText({
   text: string;
   evidence: string;
 }) {
-  if (!evidence || !text.includes(evidence)) {
-    return (
-      <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-        {text}
-      </p>
-    );
-  }
-
   // Use a case-insensitive regex to split the text
   const parts = text.split(new RegExp(`(${evidence})`, 'gi'));
   return (
@@ -83,6 +75,8 @@ export function AnalysisResultCard({
   const isPatternDetected = result.dark_pattern_detected;
   const confidenceValue =
     { High: 90, Medium: 60, Low: 30 }[result.confidence] || 0;
+
+  const canHighlight = websiteText && result.evidence && websiteText.toLowerCase().includes(result.evidence.toLowerCase());
 
   return (
     <Card className="w-full animate-in fade-in-50 duration-500">
@@ -141,9 +135,31 @@ export function AnalysisResultCard({
               </div>
             </div>
             <div>
-              <h3 className="mb-2 font-semibold">Evidence in Context</h3>
+              <h3 className="mb-2 font-semibold">Evidence</h3>
               <div className="rounded-md border bg-muted/50 p-4">
-                <HighlightedText text={websiteText} evidence={result.evidence} />
+                {canHighlight ? (
+                   <div>
+                    <h4 className="mb-2 text-sm font-semibold">In Context</h4>
+                    <HighlightedText text={websiteText} evidence={result.evidence} />
+                   </div>
+                ) : (
+                  <div className="space-y-4">
+                    {websiteText && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground mb-2">Original Text</h4>
+                        <p className="whitespace-pre-wrap text-sm text-muted-foreground">{websiteText}</p>
+                      </div>
+                    )}
+                    {result.evidence && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground mb-2">Identified Evidence</h4>
+                        <blockquote className="border-l-2 border-accent pl-4 italic text-muted-foreground">
+                          {result.evidence}
+                        </blockquote>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </>
